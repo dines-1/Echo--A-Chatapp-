@@ -2,7 +2,7 @@ import mongoose,{Document,Schema} from "mongoose" ;
 
 type UserRole = 'admin' | 'customer' ;
 
-interface IUser extends Document{
+export interface IUser extends Document{
     fullname : string;
     username : string;
     email:string;
@@ -60,5 +60,5 @@ const UserSchema = new Schema <IUser>(
     {timestamps:true}
     
 );
-const UserModel = (mongoose.models.User as mongoose.Model<IUser>) || mongoose.model<IUser> ('User',UserSchema);
-export default UserModel;
+const User = (mongoose.models.User as mongoose.Model<IUser>) || mongoose.model<IUser> ('User',UserSchema);
+export default User;
