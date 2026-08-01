@@ -39,10 +39,16 @@ const UserSchema = new Schema <IUser>(
         match: [ /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,"Please use a valid email"],
         lowercase :true
     },
+    phone : {
+        type:String,
+        trim:true,
+        match:[/^(\+\d{1,4})?\d{7,15}$/,'Please enter a valid number']
+    },
     password:{
         type :String,
         required:[true,'Please enter the password'],
         trim:true,
+        match: [/^(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/,"Password must be at least 8 characters and contain at least one number and one special character."],
         select :false,
     },
     avatar:{
@@ -53,9 +59,15 @@ const UserSchema = new Schema <IUser>(
         type:Boolean,
         default : false
     },
-    lastseen :{
-        type:Date,Default:Date.now
-    },
+    role: {
+  type: String,
+  enum: ["admin", "customer"],
+  default: "customer",
+},
+lastseen: {
+  type: Date,
+  default: Date.now,   
+},
 },
     {timestamps:true}
     
