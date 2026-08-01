@@ -4,9 +4,9 @@ import bcrypt from "bcryptjs";
 import dbConnect from "@/src/lib/db";
 import User from "@/src/models/User";
 import VerificationToken from "@/src/models/VerificationToken";
-import { registerSchema, verifyOtpSchema } from "@/src/schemas/authSchema";
+import { registerSchema } from "@/src/schemas/authSchema";
 import { generateOtp } from "@/src/lib/generateOtp";
-import { sendOtpEmail } from "@/src/lib/actions/email.actions";
+import { sendOtpEmail } from "@/src/lib/email/verifyEmail";
 
 export async function registerUser(req: NextRequest) {
   try {
