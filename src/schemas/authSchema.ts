@@ -31,6 +31,7 @@ export const registerSchema = z.object({
 
 export type RegisterInput = z.infer<typeof registerSchema>;
 
+
 // zod validation for login 
 export const loginSchema = z.object({
   username: registerSchema,
@@ -39,3 +40,11 @@ export const loginSchema = z.object({
 });
 
 export type LoginInput = z.infer<typeof loginSchema>;
+
+//ZOD  validation  for otp verification 
+export const verifyOtpSchema = z.object({
+  email: z.string().trim().toLowerCase().email(),
+  otp: z.string().length(6, "OTP must be 6 digits").regex(/^\d+$/, "OTP must be numeric"),
+});
+
+export type VerifyOtpInput = z.infer<typeof verifyOtpSchema>;

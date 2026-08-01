@@ -12,6 +12,7 @@ export interface IUser extends Document{
     role : UserRole;
     IsOnline : boolean;
     lastseen: Date;
+    isVerified:boolean;
     createdaAt : Date;
     updatedAt: Date;
 }
@@ -54,6 +55,10 @@ const UserSchema = new Schema <IUser>(
     avatar:{
         type:String,
         default:''
+    },
+    isVerified:{
+        type:Boolean,
+        default:false
     },
     IsOnline :{
         type:Boolean,
