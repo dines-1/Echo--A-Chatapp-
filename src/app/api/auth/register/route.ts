@@ -76,3 +76,7 @@ export async function registerUser(req: NextRequest) {
     );
   }
 }
+
+export async function POST(req: NextRequest) {
+  return registerUser(req);
+}
