@@ -34,9 +34,8 @@ export type RegisterInput = z.infer<typeof registerSchema>;
 
 // zod validation for login 
 export const loginSchema = z.object({
-  username: registerSchema,
-  email: z.string().email({message:'invalid email address'}),
-  password : z.string().min(8,{message:'Password must be 8 character with number and symbol'})
+  email: z.string().trim().toLowerCase().email({ message: "Invalid email address" }),
+  password: z.string().min(1, { message: "Password is required" }),
 });
 
 export type LoginInput = z.infer<typeof loginSchema>;
