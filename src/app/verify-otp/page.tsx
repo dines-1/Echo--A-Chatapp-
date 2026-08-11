@@ -14,6 +14,7 @@ function VerifyOtpContent() {
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
+  const [cooldownSeconds, setCooldownSeconds] = useState(0);
 
   useEffect(() => {
     const queryEmail = searchParams.get("email");
@@ -21,6 +22,15 @@ function VerifyOtpContent() {
       setEmail(queryEmail);
     }
   }, [searchParams]);
+
+  // Countdown timer effect
+  useEffect(() => {
+    if (cooldownSeconds <= 0) return;
+    const timer = setInterval(() => {
+      setCooldownSeconds((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [cooldownSeconds]);
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,6 +70,8 @@ function VerifyOtpContent() {
       return;
     }
 
+    if (cooldownSeconds > 0) return;
+
     setError(null);
     setSuccess(null);
     setResending(true);
@@ -75,11 +87,15 @@ function VerifyOtpContent() {
 
       if (!res.ok) {
         setError(data.error || "Failed to resend verification code");
+        if (data.remainingSeconds) {
+          setCooldownSeconds(data.remainingSeconds);
+        }
         setResending(false);
         return;
       }
 
       setSuccess("A new 6-digit verification code has been sent via email!");
+      setCooldownSeconds(60); // Start 60-second visual cooldown
       setResending(false);
     } catch (err: unknown) {
       console.error("Resend OTP error:", err);
@@ -176,10 +192,14 @@ function VerifyOtpContent() {
           <button
             type="button"
             onClick={handleResend}
-            disabled={resending}
-            className="text-blue-400 hover:text-blue-300 font-medium hover:underline disabled:opacity-50"
+            disabled={resending || cooldownSeconds > 0}
+            className="text-blue-400 hover:text-blue-300 font-medium hover:underline disabled:opacity-50 disabled:no-underline disabled:cursor-not-allowed"
           >
-            {resending ? "Sending new code..." : "Resend Verification Code"}
+            {resending
+              ? "Sending new code..."
+              : cooldownSeconds > 0
+              ? `Resend Code in ${cooldownSeconds}s`
+              : "Resend Verification Code"}
           </button>
 
           <Link href="/login" className="text-slate-400 hover:text-slate-200">

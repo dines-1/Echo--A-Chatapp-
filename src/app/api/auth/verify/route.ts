@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/src/lib/db";
 import User from "@/src/models/User";
 import VerificationToken from "@/src/models/VerificationToken";
-import {  verifyOtpSchema } from "@/src/schemas/authSchema";
+import { verifyOtpSchema } from "@/src/schemas/authSchema";
+import { checkRateLimit } from "@/src/lib/rateLimit";
 
 export async function verifyOtp(req: NextRequest) {
   try {
@@ -18,6 +19,15 @@ export async function verifyOtp(req: NextRequest) {
 
     const { email, otp } = result.data;
 
+    // Rate limiting: max 5 failed attempts per email per 15 minutes
+    const attemptLimit = checkRateLimit(`verify-attempts:${email}`, 5, 15 * 60 * 1000);
+    if (!attemptLimit.success) {
+      return NextResponse.json(
+        { error: `Too many failed verification attempts. Please try again in ${Math.ceil(attemptLimit.resetInSeconds / 60)} minutes.` },
+        { status: 429 }
+      );
+    }
+
     await dbConnect();
 
     const user = await User.findOne({ email });
@@ -29,9 +39,19 @@ export async function verifyOtp(req: NextRequest) {
       return NextResponse.json({ message: "Account already verified" });
     }
 
-    const token = await VerificationToken.findOne({ userId: user._id, otp });
+    // Check token with explicit purpose and expiration check
+    const token = await VerificationToken.findOne({
+      userId: user._id,
+      otp,
+      purpose: "email-verification",
+      expiresAt: { $gt: new Date() },
+    });
+
     if (!token) {
-      return NextResponse.json({ error: "Invalid or expired OTP" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid or expired verification code" },
+        { status: 400 }
+      );
     }
 
     user.isVerified = true;

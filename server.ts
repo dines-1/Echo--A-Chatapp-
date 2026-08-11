@@ -1,5 +1,5 @@
 import express from "express";
-import { createServer } from "http";
+import { createServer } from "node:http";
 import next from "next";
 import { Server as SocketIOServer } from "socket.io";
 import mongoose from "mongoose";
@@ -97,8 +97,8 @@ app.prepare().then(async () => {
           ).lean();
           if (!conversation) return;
 
-          const participants = (conversation.participants as mongoose.Types.ObjectId[]).map(
-            (p) => p.toString()
+          const participants = (conversation.participants as any[]).map(
+            (p: any) => p.toString()
           );
 
           // Populate sender info for the response
@@ -179,8 +179,8 @@ app.prepare().then(async () => {
           ).lean();
           if (!conversation) return;
 
-          const participants = (conversation.participants as mongoose.Types.ObjectId[]).map(
-            (p) => p.toString()
+          const participants = (conversation.participants as any[]).map(
+            (p: any) => p.toString()
           );
 
           for (const participantId of participants) {

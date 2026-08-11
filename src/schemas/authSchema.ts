@@ -21,7 +21,10 @@ export const registerSchema = z.object({
     password: z
       .string()
       .min(8, "Password must be at least 8 characters")
-      .regex(/[0-9]/, "Must contain a number"),
+      .regex(
+        /^(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/,
+        "Password must contain at least one number and one special character"
+      ),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -47,3 +50,45 @@ export const verifyOtpSchema = z.object({
 });
 
 export type VerifyOtpInput = z.infer<typeof verifyOtpSchema>;
+
+// ZOD validation for updating profile
+export const updateProfileSchema = z.object({
+  fullname: z.string().trim().min(3, "Full name must be at least 3 characters"),
+  phone: z
+    .string()
+    .trim()
+    .regex(/^(\+\d{1,4})?\d{7,15}$/, "Please enter a valid phone number")
+    .optional()
+    .or(z.literal("")),
+  avatar: z.string().optional().or(z.literal("")),
+  bio: z.string().max(200, "Bio must be 200 characters or less").optional().or(z.literal("")),
+  preferences: z
+    .object({
+      soundEnabled: z.boolean().default(true),
+      onlineStatusVisible: z.boolean().default(true),
+      notificationsEnabled: z.boolean().default(true),
+    })
+    .optional(),
+});
+
+export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
+
+// ZOD validation for changing password
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Current password is required"),
+    newPassword: z
+      .string()
+      .min(8, "New password must be at least 8 characters")
+      .regex(
+        /^(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/,
+        "New password must contain at least one number and one special character"
+      ),
+    confirmNewPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmNewPassword, {
+    message: "New passwords don't match",
+    path: ["confirmNewPassword"],
+  });
+
+export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;

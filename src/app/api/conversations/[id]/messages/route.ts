@@ -15,7 +15,7 @@ import Conversation from "@/src/models/Conversation";
  */
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -23,7 +23,7 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { id: conversationId } = await params;
+    const { id: conversationId } = await context.params;
 
     await dbConnect();
 

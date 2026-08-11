@@ -9,6 +9,12 @@ export interface IUser extends Document{
     phone:string;
     password:string;
     avatar:string;
+    bio?: string;
+    preferences?: {
+      soundEnabled: boolean;
+      onlineStatusVisible: boolean;
+      notificationsEnabled: boolean;
+    };
     role : UserRole;
     IsOnline : boolean;
     lastseen: Date;
@@ -55,6 +61,16 @@ const UserSchema = new Schema <IUser>(
     avatar:{
         type:String,
         default:''
+    },
+    bio:{
+        type:String,
+        default:'',
+        maxlength: 200,
+    },
+    preferences:{
+        soundEnabled: { type: Boolean, default: true },
+        onlineStatusVisible: { type: Boolean, default: true },
+        notificationsEnabled: { type: Boolean, default: true },
     },
     isVerified:{
         type:Boolean,
