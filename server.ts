@@ -4,7 +4,6 @@ import next from "next";
 import { Server as SocketIOServer } from "socket.io";
 import mongoose from "mongoose";
 
-// ── Next.js setup ──────────────────────────────────────────────────────────
 const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
 const port = parseInt(process.env.PORT || "3000", 10);
@@ -12,14 +11,12 @@ const port = parseInt(process.env.PORT || "3000", 10);
 const app = next({ dev, hostname, port });
 const handle = app.getRequestHandler();
 
-// ── Track online users: userId → Set<socketId> ────────────────────────────
 const onlineUsers = new Map<string, Set<string>>();
 
 app.prepare().then(async () => {
   const expressApp = express();
   const httpServer = createServer(expressApp);
 
-  // ── Socket.IO ──────────────────────────────────────────────────────────
   const io = new SocketIOServer(httpServer, {
     cors: {
       origin: process.env.NEXT_PUBLIC_SOCKET_URL || `http://${hostname}:${port}`,
@@ -29,36 +26,29 @@ app.prepare().then(async () => {
     transports: ["websocket", "polling"],
   });
 
-  // Make io accessible from Next.js API routes via globalThis
   (globalThis as any).__socketIO = io;
   (globalThis as any).__onlineUsers = onlineUsers;
 
   io.on("connection", (socket) => {
     console.log(`⚡ Socket connected: ${socket.id}`);
 
-    // ── User comes online ──────────────────────────────────────────────
     socket.on("user:online", (userId: string) => {
       if (!userId) return;
 
-      // Track this socket for the user
       if (!onlineUsers.has(userId)) {
         onlineUsers.set(userId, new Set());
       }
       onlineUsers.get(userId)!.add(socket.id);
 
-      // Join a personal room so we can emit directly to this user
       socket.join(`user:${userId}`);
 
-      // Store userId on socket for cleanup
       (socket as any).userId = userId;
 
-      // Broadcast online status
       socket.broadcast.emit("user:status", { userId, isOnline: true });
 
-      console.log(`👤 User online: ${userId} (${onlineUsers.get(userId)!.size} connections)`);
+      console.log(` User online: ${userId} (${onlineUsers.get(userId)!.size} connections)`);
     });
 
-    // ── Send a message ─────────────────────────────────────────────────
     socket.on(
       "message:send",
       async (data: {
@@ -68,30 +58,25 @@ app.prepare().then(async () => {
         content: string;
       }) => {
         try {
-          // Lazy-import models (they register themselves with Mongoose)
           const Message = (await import("./src/models/Message")).default;
           const Conversation = (await import("./src/models/Conversation"))
             .default;
           const Notification = (await import("./src/models/Notification"))
             .default;
 
-          // Ensure DB connection
           const dbConnect = (await import("./src/lib/db")).default;
           await dbConnect();
 
-          // Save the message
           const message = await Message.create({
             conversation: data.conversationId,
             sender: data.senderId,
             content: data.content,
           });
 
-          // Update conversation's lastMessage
           await Conversation.findByIdAndUpdate(data.conversationId, {
             lastMessage: message._id,
           });
 
-          // Get conversation participants
           const conversation = await Conversation.findById(
             data.conversationId
           ).lean();
@@ -101,19 +86,16 @@ app.prepare().then(async () => {
             (p: any) => p.toString()
           );
 
-          // Populate sender info for the response
           const populatedMessage = await Message.findById(message._id)
             .populate("sender", "fullname username avatar")
             .lean();
 
-          // Emit to all participants in the conversation
           for (const participantId of participants) {
             io.to(`user:${participantId}`).emit("message:new", {
               conversationId: data.conversationId,
               message: populatedMessage,
             });
 
-            // Create notification for recipients (not the sender)
             if (participantId !== data.senderId) {
               const notification = await Notification.create({
                 recipient: participantId,
@@ -149,7 +131,6 @@ app.prepare().then(async () => {
       }
     );
 
-    // ── Mark messages as seen ──────────────────────────────────────────
     socket.on(
       "message:seen",
       async (data: { conversationId: string; userId: string }) => {
@@ -170,7 +151,6 @@ app.prepare().then(async () => {
             }
           );
 
-          // Get conversation to notify sender
           const Conversation = (
             await import("./src/models/Conversation")
           ).default;
@@ -197,7 +177,6 @@ app.prepare().then(async () => {
       }
     );
 
-    // ── Typing indicators ──────────────────────────────────────────────
     socket.on(
       "typing:start",
       (data: {
@@ -216,7 +195,6 @@ app.prepare().then(async () => {
       }
     );
 
-    // ── Notification read ──────────────────────────────────────────────
     socket.on(
       "notification:read",
       async (data: { notificationId: string; userId: string }) => {
@@ -237,7 +215,6 @@ app.prepare().then(async () => {
       }
     );
 
-    // ── Disconnect ─────────────────────────────────────────────────────
     socket.on("disconnect", () => {
       const userId = (socket as any).userId as string | undefined;
       if (userId) {
@@ -246,7 +223,6 @@ app.prepare().then(async () => {
           sockets.delete(socket.id);
           if (sockets.size === 0) {
             onlineUsers.delete(userId);
-            // Update lastseen in DB
             import("./src/models/User").then(({ default: User }) =>
               import("./src/lib/db").then(({ default: dbConnect }) =>
                 dbConnect().then(() =>
@@ -257,7 +233,6 @@ app.prepare().then(async () => {
                 )
               )
             );
-            // Broadcast offline status
             socket.broadcast.emit("user:status", {
               userId,
               isOnline: false,
@@ -270,8 +245,7 @@ app.prepare().then(async () => {
     });
   });
 
-  // ── Route everything else through Next.js ────────────────────────────
-  expressApp.all("*", (req: any, res: any) => {
+  expressApp.use((req: any, res: any) => {
     return handle(req, res);
   });
 

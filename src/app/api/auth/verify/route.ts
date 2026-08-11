@@ -19,7 +19,6 @@ export async function verifyOtp(req: NextRequest) {
 
     const { email, otp } = result.data;
 
-    // Rate limiting: max 5 failed attempts per email per 15 minutes
     const attemptLimit = checkRateLimit(`verify-attempts:${email}`, 5, 15 * 60 * 1000);
     if (!attemptLimit.success) {
       return NextResponse.json(
@@ -39,7 +38,6 @@ export async function verifyOtp(req: NextRequest) {
       return NextResponse.json({ message: "Account already verified" });
     }
 
-    // Check token with explicit purpose and expiration check
     const token = await VerificationToken.findOne({
       userId: user._id,
       otp,

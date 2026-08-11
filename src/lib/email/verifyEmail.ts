@@ -9,7 +9,7 @@ export async function sendOtpEmail(email: string, username: string, otp: string)
     }
 
     await resend.emails.send({
-      from: "Echo <onboarding@resend.dev>",
+      from: "onboarding@resend.dev",
       to: email,
       subject: "Verify your Echo account - OTP Code",
       html: `

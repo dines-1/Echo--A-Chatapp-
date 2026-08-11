@@ -207,31 +207,28 @@ export default function SettingsModal({
         <div className="flex border-b border-slate-800 bg-slate-950/50 px-6 gap-2 pt-2">
           <button
             onClick={() => { setActiveTab("profile"); setMessage(null); }}
-            className={`py-3 px-4 text-xs font-semibold rounded-t-xl transition-all border-b-2 ${
-              activeTab === "profile"
+            className={`py-3 px-4 text-xs font-semibold rounded-t-xl transition-all border-b-2 ${activeTab === "profile"
                 ? "border-blue-500 text-blue-400 bg-slate-900"
                 : "border-transparent text-slate-400 hover:text-slate-200"
-            }`}
+              }`}
           >
             👤 Edit Profile
           </button>
           <button
             onClick={() => { setActiveTab("security"); setMessage(null); }}
-            className={`py-3 px-4 text-xs font-semibold rounded-t-xl transition-all border-b-2 ${
-              activeTab === "security"
+            className={`py-3 px-4 text-xs font-semibold rounded-t-xl transition-all border-b-2 ${activeTab === "security"
                 ? "border-blue-500 text-blue-400 bg-slate-900"
                 : "border-transparent text-slate-400 hover:text-slate-200"
-            }`}
+              }`}
           >
             🔒 Security & Password
           </button>
           <button
             onClick={() => { setActiveTab("preferences"); setMessage(null); }}
-            className={`py-3 px-4 text-xs font-semibold rounded-t-xl transition-all border-b-2 ${
-              activeTab === "preferences"
+            className={`py-3 px-4 text-xs font-semibold rounded-t-xl transition-all border-b-2 ${activeTab === "preferences"
                 ? "border-blue-500 text-blue-400 bg-slate-900"
                 : "border-transparent text-slate-400 hover:text-slate-200"
-            }`}
+              }`}
           >
             🔔 App Preferences
           </button>
@@ -240,11 +237,10 @@ export default function SettingsModal({
         {/* Feedback Alert */}
         {message && (
           <div
-            className={`mx-6 mt-4 p-3.5 rounded-xl text-xs flex items-center gap-2 border ${
-              message.type === "success"
+            className={`mx-6 mt-4 p-3.5 rounded-xl text-xs flex items-center gap-2 border ${message.type === "success"
                 ? "bg-emerald-950/60 border-emerald-800 text-emerald-200"
                 : "bg-red-950/60 border-red-800 text-red-200"
-            }`}
+              }`}
           >
             <span>{message.type === "success" ? "✅" : "⚠️"}</span>
             <span>{message.text}</span>
@@ -287,9 +283,8 @@ export default function SettingsModal({
                           key={idx}
                           type="button"
                           onClick={() => setProfile((p) => ({ ...p, avatar: url }))}
-                          className={`w-9 h-9 rounded-full border-2 overflow-hidden transition-all shrink-0 ${
-                            profile.avatar === url ? "border-blue-500 ring-2 ring-blue-500/50" : "border-slate-700 opacity-70 hover:opacity-100"
-                          }`}
+                          className={`w-9 h-9 rounded-full border-2 overflow-hidden transition-all shrink-0 ${profile.avatar === url ? "border-blue-500 ring-2 ring-blue-500/50" : "border-slate-700 opacity-70 hover:opacity-100"
+                            }`}
                         >
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img src={url} alt={`Preset ${idx}`} className="w-full h-full object-cover" />
@@ -461,7 +456,7 @@ export default function SettingsModal({
                       }
                       className="sr-only peer"
                     />
-                    <div className="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                    <div className="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
                   </label>
                 </div>
 
@@ -482,7 +477,7 @@ export default function SettingsModal({
                       }
                       className="sr-only peer"
                     />
-                    <div className="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                    <div className="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
                   </label>
                 </div>
 
@@ -503,7 +498,7 @@ export default function SettingsModal({
                       }
                       className="sr-only peer"
                     />
-                    <div className="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                    <div className="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
                   </label>
                 </div>
               </div>

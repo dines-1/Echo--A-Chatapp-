@@ -169,14 +169,14 @@ export default function ChatPage() {
           .map((c) =>
             c._id === data.conversationId
               ? {
-                  ...c,
-                  lastMessage: {
-                    content: data.message.content,
-                    sender: { username: data.message.sender.username },
-                    createdAt: data.message.createdAt,
-                  },
-                  updatedAt: data.message.createdAt,
-                }
+                ...c,
+                lastMessage: {
+                  content: data.message.content,
+                  sender: { username: data.message.sender.username },
+                  createdAt: data.message.createdAt,
+                },
+                updatedAt: data.message.createdAt,
+              }
               : c
           )
           .sort(
@@ -406,7 +406,7 @@ export default function ChatPage() {
       {/* ── Top Bar ─────────────────────────────────────────────────── */}
       <header className="bg-slate-900/90 border-b border-slate-800 px-6 py-4 flex items-center justify-between backdrop-blur-md">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center justify-center font-bold text-lg text-white shadow-md">
+          <div className="w-10 h-10 rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 flex items-center justify-center font-bold text-lg text-white shadow-md">
             E
           </div>
           <div>
@@ -476,9 +476,8 @@ export default function ChatPage() {
                           if (!n.isRead) markAsRead(n._id);
                           setShowNotifications(false);
                         }}
-                        className={`w-full text-left p-3 border-b border-slate-800/50 hover:bg-slate-800/50 transition-all ${
-                          !n.isRead ? "bg-blue-950/20" : ""
-                        }`}
+                        className={`w-full text-left p-3 border-b border-slate-800/50 hover:bg-slate-800/50 transition-all ${!n.isRead ? "bg-blue-950/20" : ""
+                          }`}
                       >
                         <div className="flex items-start gap-2">
                           {!n.isRead && (
@@ -639,27 +638,24 @@ export default function ChatPage() {
                   <button
                     key={convo._id}
                     onClick={() => setSelectedConvo(convo)}
-                    className={`w-full text-left p-3 rounded-xl transition-all flex items-center gap-3 border ${
-                      isSelected
+                    className={`w-full text-left p-3 rounded-xl transition-all flex items-center gap-3 border ${isSelected
                         ? "bg-blue-600/20 border-blue-500/40 text-slate-100"
                         : "bg-slate-800/40 border-slate-800 text-slate-300 hover:bg-slate-800/80"
-                    }`}
+                      }`}
                   >
                     <div className="relative">
                       <div
-                        className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs ${
-                          convo.isGroup
+                        className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs ${convo.isGroup
                             ? "bg-indigo-900/50 text-indigo-300"
                             : "bg-slate-700 text-blue-300"
-                        }`}
+                          }`}
                       >
                         {getConvoInitials(convo)}
                       </div>
                       {!convo.isGroup && (
                         <span
-                          className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full ring-2 ring-slate-900 ${
-                            online ? "bg-emerald-500" : "bg-slate-600"
-                          }`}
+                          className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full ring-2 ring-slate-900 ${online ? "bg-emerald-500" : "bg-slate-600"
+                            }`}
                         />
                       )}
                     </div>
@@ -700,11 +696,10 @@ export default function ChatPage() {
               {/* Header */}
               <div className="p-4 border-b border-slate-800 bg-slate-900/90 flex items-center gap-3">
                 <div
-                  className={`w-10 h-10 rounded-full border flex items-center justify-center font-bold text-sm ${
-                    selectedConvo.isGroup
+                  className={`w-10 h-10 rounded-full border flex items-center justify-center font-bold text-sm ${selectedConvo.isGroup
                       ? "bg-indigo-600/20 border-indigo-500/30 text-indigo-300"
                       : "bg-blue-600/20 border-blue-500/30 text-blue-300"
-                  }`}
+                    }`}
                 >
                   {getConvoInitials(selectedConvo)}
                 </div>
@@ -759,20 +754,18 @@ export default function ChatPage() {
                     return (
                       <div
                         key={msg._id}
-                        className={`flex flex-col ${
-                          isMe ? "items-end" : "items-start"
-                        }`}
+                        className={`flex flex-col ${isMe ? "items-end" : "items-start"
+                          }`}
                       >
                         <div className="text-[11px] text-slate-400 mb-1 px-1">
                           {msg.sender.username} •{" "}
                           {formatTime(msg.createdAt)}
                         </div>
                         <div
-                          className={`max-w-md px-4 py-2.5 rounded-2xl text-sm ${
-                            isMe
+                          className={`max-w-md px-4 py-2.5 rounded-2xl text-sm ${isMe
                               ? "bg-blue-600 text-white rounded-br-none"
                               : "bg-slate-800 text-slate-100 rounded-bl-none border border-slate-700/60"
-                          }`}
+                            }`}
                         >
                           {msg.content}
                         </div>
@@ -781,8 +774,8 @@ export default function ChatPage() {
                             {msg.status === "seen"
                               ? "✓✓ Seen"
                               : msg.status === "delivered"
-                              ? "✓✓"
-                              : "✓"}
+                                ? "✓✓"
+                                : "✓"}
                           </span>
                         )}
                       </div>
