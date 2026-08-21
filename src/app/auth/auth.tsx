@@ -353,7 +353,7 @@ export default function AuthLayout() {
                                             <span>Creating account...</span>
                                         </>
                                     ) : (
-                                        <span>Register & send OTP</span>
+                                        <span>Register</span>
                                     )}
                                 </button>
                             </form>
